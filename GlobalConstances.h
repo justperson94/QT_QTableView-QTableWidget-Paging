@@ -21,18 +21,19 @@
 static const QString g_dbFileName = "data.dat";
 static const QString g_dbTableName = "daily";
 
-static const QString g_titleLabel = "Title";
-static const QString g_dateLabel = "Date";
-static const QString g_authorLabel = "Author";
-static const QString g_weatherLabel = "Weather";
-static const QString g_contentLabel = "Content";
+static const QString g_mmsiLabel = "MMSI";
+static const QString g_numPointLabel = "NUM_POINT";
+static const QString g_minLatLabel = "MIN_LAT";
+static const QString g_maxLatLabel = "MAX_LAT";
+static const QString g_minLonLabel = "MIN_LON";
+static const QString g_maxLonLabel = "MAX_LON";
 
-#define CHECKED         1
-#define TITLE           2
-#define DATE            3
-#define WEATHER         4
-#define AUTHOR          5
-#define CONTENT         6
+#define MMSI            1  // ID: 0
+#define NUM_POINT       2
+#define MIN_LAT         3
+#define MAX_LAT         4
+#define MIN_LON         5
+#define MAX_LON         6
 
 #endif // GLOBALCONSTANCES_H
 

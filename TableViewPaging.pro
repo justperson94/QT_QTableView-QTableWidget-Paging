@@ -15,14 +15,11 @@ TEMPLATE = app
 SOURCES += main.cpp\
         MainWindow.cpp \
     DatabaseManager.cpp \
-    TableViewPage.cpp \
-    InsertDialog.cpp
+    TableViewPage.cpp
 
 HEADERS  += MainWindow.h \
     DatabaseManager.h \
     GlobalConstances.h \
-    TableViewPage.h \
-    InsertDialog.h
+    TableViewPage.h
 
-FORMS    += MainWindow.ui \
-    InsertDialog.ui
+FORMS    += MainWindow.ui

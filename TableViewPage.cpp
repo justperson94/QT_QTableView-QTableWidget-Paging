@@ -31,7 +31,7 @@
 TableViewPage::TableViewPage(QWidget *parent) :
     QTableView(parent),
     m_nStartId(0), m_nPageSize(9), m_nCurPageSize(0), m_nTotal(0),
-    m_nCurPage(1), m_nTotalPage(0)
+    m_nCurPage(1), m_nTotalPage(0), m_enableModify(true)
 {
     DatabaseManager *dbMgr = new DatabaseManager;
     dbMgr->createConnect();
@@ -44,14 +44,13 @@ TableViewPage::TableViewPage(QWidget *parent) :
     m_sqlModel->moveToThread(&m_thread);
     m_thread.start();
     m_sqlModel->setTable(g_dbTableName);
-//    m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     m_sqlModel->select();
-    m_sqlModel->setHeaderData(CHECKED, Qt::Horizontal, tr("√"));
-    m_sqlModel->setHeaderData(TITLE, Qt::Horizontal, tr("Title"));
-    m_sqlModel->setHeaderData(DATE, Qt::Horizontal, tr("Date"));
-    m_sqlModel->setHeaderData(WEATHER, Qt::Horizontal, tr("Weather"));
-    m_sqlModel->setHeaderData(AUTHOR, Qt::Horizontal, tr("Author"));
-    m_sqlModel->setHeaderData(CONTENT, Qt::Horizontal, tr("Content"));
+    m_sqlModel->setHeaderData(MMSI, Qt::Horizontal, g_mmsiLabel.toStdString().c_str());
+    m_sqlModel->setHeaderData(NUM_POINT, Qt::Horizontal, g_numPointLabel.toStdString().c_str());
+    m_sqlModel->setHeaderData(MIN_LAT, Qt::Horizontal, g_minLatLabel.toStdString().c_str());
+    m_sqlModel->setHeaderData(MAX_LAT, Qt::Horizontal, g_maxLatLabel.toStdString().c_str());
+    m_sqlModel->setHeaderData(MIN_LON, Qt::Horizontal, g_minLonLabel.toStdString().c_str());
+    m_sqlModel->setHeaderData(MAX_LON, Qt::Horizontal, g_maxLonLabel.toStdString().c_str());
 
     qDebug() << "row count:" << m_sqlModel->rowCount();
     m_nTotal = m_sqlModel->rowCount();
@@ -59,8 +58,8 @@ TableViewPage::TableViewPage(QWidget *parent) :
     m_nLastPageSize = lastPageSize();
     this->updateModel();    //更新每页数据
     this->setModel(m_sqlModel);
-    this->hideColumn(0);
-    this->verticalHeader()->hide();
+    this->hideColumn(0);// ID column
+    // this->verticalHeader()->hide();
 
     this->setItemDelegate(new BackgroundItemDelegate(this));
 }
@@ -90,13 +89,12 @@ QList<QVariant> TableViewPage::currentRowInfo() const
     if( !idx.isValid() ) return list;
     int r = idx.row();
     QSqlRecord record = m_sqlModel->record(r);  //取得当前行的数据集
-    for( int i = TITLE; i < record.count(); ++i)//从Title位置开始取数据
+    for( int i = 0; i < record.count(); ++i)//从Title位置开始取数据
     {
         QSqlField field = record.field(i);
         QString data = field.value().toString();
         list.append(data);
     }
-
     return list;
 }
 
@@ -110,13 +108,12 @@ void TableViewPage::insert(const QList<QVariant> &valueList)
     m_nCurPage = m_nTotalPage;
 
     m_sqlModel->insertRow(rowNum);
-    int col = CHECKED;
-    m_sqlModel->setData(m_sqlModel->index(rowNum, col), 0);
+    int col = MMSI;
     for( int i = 0; i < valueList.count(); ++i)
     {
-        col++;
         QString data = valueList.at(i).toString();
         m_sqlModel->setData(m_sqlModel->index(rowNum, col), data);
+        col++;
     }
     m_nTotal++;
 
@@ -215,14 +212,6 @@ void TableViewPage::updateModel()
     m_nCurPageSize = m_sqlModel->rowCount();
 }
 
-void TableViewPage::highLightView(bool enabled)
-{
-    if( enabled )
-        this->setItemDelegate(new BackgroundItemDelegate(this));
-    else
-        this->setItemDelegate(new QItemDelegate(this));
-}
-
 /**
  * 最后一页记录条数
  * @brief TableViewPage::lastPageSize
@@ -235,20 +224,23 @@ int TableViewPage::lastPageSize()
     return m_nLastPageSize;
 }
 
+// TableWidgetPage right click event (insert, delete)
 void TableViewPage::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu* popMenu = new QMenu(this);
     QAction *insertAction = popMenu->addAction( tr("&Insert") );
+    insertAction->setEnabled(m_enableModify);
+
     connect( insertAction, SIGNAL(triggered()), this, SIGNAL(insertAct()) );
 
     QAction *removeAction = popMenu->addAction( tr("&Remove") );
-    removeAction->setEnabled(false);
+    removeAction->setEnabled(false and m_enableModify);
 
     QModelIndex idx = this->indexAt( mapFromGlobal( QPoint( event->globalPos().x(), \
             event->globalPos().y()-this->horizontalHeader()->height())) );
     if( idx.isValid() )
     {
-        removeAction->setEnabled(true);
+        removeAction->setEnabled(true and m_enableModify);
         connect( removeAction, SIGNAL(triggered()), this, SIGNAL(removeAct()) );
     }
     else

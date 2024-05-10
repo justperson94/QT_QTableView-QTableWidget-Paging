@@ -16,17 +16,10 @@
 
 #include "MainWindow.h"
 #include <QApplication>
-#include <QTextCodec>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-    QTextCodec *codec = QTextCodec::codecForName("GB18030");
-    QTextCodec::setCodecForLocale(codec);
-    QTextCodec::setCodecForCStrings(codec);
-    QTextCodec::setCodecForTr(codec);
-
     MainWindow w;
     w.setWindowTitle(QObject::tr("TableView Paging"));
     w.show();

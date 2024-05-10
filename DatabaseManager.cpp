@@ -80,7 +80,7 @@ bool DatabaseManager::createTable()
     if( !tableList.contains(g_dbTableName) )
     {
         QString createTable = QString("CREATE TABLE %1 (ID integer PRIMARY KEY AUTOINCREMENT,"
-                                      "Checked integer default 0, Title text, Date text, Weather text, Author text, Content text)"
+                                      "MMSI text, NUM_POINT text, MIN_LAT text, MAX_LAT text, MIN_LON text, MAX_LON text)"
                                       ).arg(g_dbTableName);
         if(!query.exec(createTable))
         {
@@ -88,6 +88,7 @@ bool DatabaseManager::createTable()
             qDebug()<< "Create table error: " << query.lastError();
             return false;
         }
+        qDebug()<< "Create table Succeed.";
     }
 
     return true;
