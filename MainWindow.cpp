@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     ui.setupUi(this);
-    updateCtrl();
+
 
     QStringList pages;
     int totalPage = ui.tableView->totalPage();
@@ -28,17 +28,45 @@ MainWindow::MainWindow(QWidget *parent) :
         pages.append( QString("%1").arg(i) );
     ui.gotoPageBox->addItems(pages);
 
+    insertTable();
+
+    updateCtrl();
+
     connect(ui.tableView, SIGNAL(insertAct()), this, SLOT(insert()) );
     connect(ui.tableView, SIGNAL(removeAct()), this, SLOT(remove()) );
-
-    connect(ui.prePageBtn, SIGNAL(clicked()), this, SLOT(prevPage()) );
-    connect(ui.nextPageBtn, SIGNAL(clicked()), this, SLOT(nextPage()) );
-    connect(ui.gotoPageBox, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(gotoPage(int)) );
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+// Doing insert operation here
+void MainWindow::insertTable()
+{
+    QList<QVariant> list;
+    QString mmsi = "TEST MMSI";
+    QString num_point = "TEST NUM_POINT";
+    QString min_lat = "TEST MIN_LAT";
+    QString max_lat = "TEST MAX_LAT";
+    QString min_lon = "TEST MIN_LON";
+    QString max_lon = "TEST MAX_LON";
+
+    for (int i = 0; i < 250; i++)
+    {
+        list.append({mmsi, num_point, min_lat, max_lat, min_lon, max_lon});
+        ui.tableView->insert(list);
+        list.clear();
+    }
+
+    updateCtrl();
+
+    int totalPage = ui.tableView->totalPage();
+    int count = ui.gotoPageBox->count();
+    if( count < totalPage)
+    {
+        for (int i = count; i < totalPage; i++)
+            ui.gotoPageBox->addItem(QString("%1").arg(i + 1));
+    }
 }
 
 void MainWindow::updateCtrl()
@@ -96,21 +124,23 @@ void MainWindow::remove()
     }
 }
 
-void MainWindow::gotoPage(int index)
+void MainWindow::on_gotoPageBox_currentIndexChanged(int index)
 {
     index++;
     ui.tableView->gotoPage(index);
     updateCtrl();
 }
 
-void MainWindow::nextPage()
+void MainWindow::on_nextPageBtn_clicked()
 {
     ui.tableView->nextPage();
+    ui.gotoPageBox->setCurrentIndex(ui.gotoPageBox->currentIndex() + 1);
     updateCtrl();
 }
 
-void MainWindow::prevPage()
+void MainWindow::on_prePageBtn_clicked()
 {
     ui.tableView->previousPage();
+    ui.gotoPageBox->setCurrentIndex(ui.gotoPageBox->currentIndex() - 1);
     updateCtrl();
 }

@@ -29,9 +29,9 @@ DatabaseManager::DatabaseManager(QObject *parent) :
 {
 }
 
-// 这里使用的是 SQLITECIPHER 数据库驱动，
-// 如果使用的是Qt自带默认的SQlite数据库，则修改这里的
-// 数据库驱动名为SQLITE,否则不能正常使用数据库引擎
+//여기에서는 SQLITECIPHER 데이터베이스 드라이버가 사용됩니다.
+// Qt와 함께 제공되는 기본 SQlite 데이터베이스를 사용하는 경우 이를 수정합니다.
+// 데이터베이스 드라이버 이름은 SQLITE입니다. 그렇지 않으면 데이터베이스 엔진을 정상적으로 사용할 수 없습니다.
 bool DatabaseManager::createConnect()
 {
     switch( m_status )
@@ -43,7 +43,8 @@ bool DatabaseManager::createConnect()
             else
             {
                 m_db = QSqlDatabase::addDatabase("QSQLITE", "READ");
-                m_db.setDatabaseName(g_dbFileName);
+                if (TABLE_SAVE_DATA)
+                    m_db.setDatabaseName(g_dbFileName);
             }
         };
         break;

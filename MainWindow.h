@@ -29,14 +29,16 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    void insertTable();
     void updateCtrl();
 
 private slots:
     void insert();
     void remove();
-    void gotoPage(int index);
-    void nextPage();
-    void prevPage();
+    void on_gotoPageBox_currentIndexChanged(int index);
+    void on_nextPageBtn_clicked();
+    void on_prePageBtn_clicked();
 
 private:
     Ui::MainWindow ui;
