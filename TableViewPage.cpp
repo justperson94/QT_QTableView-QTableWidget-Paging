@@ -30,7 +30,7 @@
 
 TableViewPage::TableViewPage(QWidget *parent) :
     QTableView(parent),
-    m_nStartId(0), m_nPageSize(9), m_nCurPageSize(0), m_nTotal(0),
+    m_nStartId(0), m_nPageSize(MAX_ITEM), m_nCurPageSize(0), m_nTotal(0),
     m_nCurPage(1), m_nTotalPage(0), m_enableModify(true)
 {
     DatabaseManager *dbMgr = new DatabaseManager;

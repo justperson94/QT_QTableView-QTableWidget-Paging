@@ -28,6 +28,8 @@ static const QString g_maxLatLabel = "MAX_LAT";
 static const QString g_minLonLabel = "MIN_LON";
 static const QString g_maxLonLabel = "MAX_LON";
 
+#define MAX_ITEM        100
+
 #define MMSI            1  // ID: 0
 #define NUM_POINT       2
 #define MIN_LAT         3
